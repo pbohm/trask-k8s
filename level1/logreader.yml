@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  annotations: 
+    deployment.kubernetes.io/revision: "1"
+  name: logreader
+  labels:
+    app: logreader
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logreader
+  template:
+    metadata:
+      labels:
+        app: logreader
+    spec:
+      restartPolicy: Always
+      containers:
+        - image: quay.io/bemisko/logreader:1.1
+          name: logreader
+          resources: {}
+

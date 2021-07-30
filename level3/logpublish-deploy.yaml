@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logpublish-deployment
+  labels:
+    app: logpublish
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: logpublish
+  template:
+    metadata:
+      labels:
+        app: logpublish
+    spec:
+      containers:
+      - name: logpublish
+        image: quay.io/bemisko/logpublish:1.1
+        ports:
+        - containerPort: 8080
