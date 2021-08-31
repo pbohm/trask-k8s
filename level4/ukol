@@ -1,6 +1,56 @@
 ## Run ngnix
-```
-kubectl run web --image ngnix
-```
+k  run web --image nginx
+k create deployment nginx --image=nginx --dry-run -o yaml > nginx.yml
+k apply -f nginx.yml
+
+## Naškálovat na 3 repliky
+k scale --replicas=3 deploy my-nginx
+
+## Vypsat pody deploymentu
+k get pod -l app=nginx -o wide
+
+### Jméno a image
+k get pod -l app=nginx -o=custom-columns='NAME:.metadata.name,IMAGE:.spec.containers[*].image'
+
+## Switch na novější verzi
+
+## Nastavení env proměnné
+     spec:    
+       containers:
+       - image: nginx
+         name: my-nginx
+         env: 
+           - name: NGINX_INSTANCE
+             value: nginx1
+         resources: {}
+
+k apply -f nginx.yml
+
+## Vytvoření secret
+echo nginx > ./username
+echo heslo > ./password
+k create secret generic nginx-pass --from-file=./username --from-file=./password
+
+## Vypúsat heslo v plaintextu
+k get secrets/nginx-pass -o jsonpath='{.data.password}' | base64 --decode
+
+## zpřístupnit data z tohoto secretu do nginx kontejnerů
+ 26         volumeMounts:             
+ 27           - name: secret-volume   
+ 28             mountPath: /etc/secret-volume
+ 29         resources: {}             
+ 30       volumes:                    
+ 31         - name: secret-volume     
+ 32           secret:                 
+ 33             secretName: nginx-pass
+
+k apply -f nginx.yml
+
+k exec -it my-nginx-787bcb59b5-vs4nc -- bash
+root@my-nginx-787bcb59b5-vs4nc:/# cat /etc/secret-volume/password 
+heslo
+
+## restart pods
+for pod in $(k get pod -l app=nginx -o=custom-columns='NAME:.metadata.name' | grep my-nginx); do k exec -it $pod -- bash -c "kill 1"; done
 
 
