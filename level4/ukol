@@ -1,0 +1,6 @@
+## Run ngnix
+```
+kubectl run web --image ngnix
+```
+
+
