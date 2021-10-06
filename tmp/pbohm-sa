@@ -1,0 +1,26 @@
+
+cat <<EOF | kubectl create -f -
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: pbohm
+spec:
+  request: $(openssl req -new -newkey rsa:1024 -keyout pbohm.pem -nodes -out - -subj "/CN=pbohm/O=pavlovo/O=pavlovo2" 2>/dev/null | base64 -w0)
+  signerName: kubernetes.io/kube-apiserver-client
+  usages:
+  - client auth
+EOF
+ 
+kubectl get csr
+kubectl certificate approve pbohm
+kubectl get csr
+ 
+ 
+kubectl get csr pbohm -o jsonpath='{.status.certificate}' | base64 -d | openssl x509 -in - -text -noout
+ 
+ 
+kubectl config set-cluster k3d --server $(kubectl config view --minify | yq e '.clusters[0].cluster.server' -)
+kubectl config set-cluster k3d --embed-certs --certificate-authority <(kubectl config view --minify --raw | yq e '.clusters[0].cluster.certificate-authority-data' - | base64 -d)
+kubectl config set-credentials pbohm-user --embed-certs --client-key pbohm.pem --client-certificate <(kubectl get csr pbohm -o jsonpath='{.status.certificate}' | base64 -d)
+kubectl config set-context pbohm-user --cluster k3d --user pbohm-user
+kubectl config use-context pbohm-user

@@ -1,0 +1,84 @@
+## Nastavení admin práv
+uživatel "alice" adminem v namespace "alice"
+uživatel "bob" adminem v namespace "bob"
+
+❯ k get rolebindings.rbac.authorization.k8s.io --all-namespaces | grep -e alice -e bob
+alice         alice-admin                                         ClusterRole/admin                                     4d6h
+bob           bob-admin                                           ClusterRole/admin                                     4d6h
+
+## Nastavení práv 
+skupina "developers" má R/W práva v namespace "developers"
+
+
+## 2. Verify authentication
+
+You got a token with the following claims:
+
+{
+  "exp": 1633506638,
+  "iat": 1633506338,
+  "auth_time": 1633506320,
+  "jti": "756cc128-7d27-4923-9ea3-0601e9f95282",
+  "iss": "https://id.trask.cz/auth/realms/trask",
+  "aud": "alpha.lab.trask.cz",
+  "sub": "07a74c37-a011-4c8c-90ce-76cf59cf71ad",
+  "typ": "ID",
+  "azp": "alpha.lab.trask.cz",
+  "nonce": "rvZmF3tmdCssuQKcqOpS_dfLpmlwmBvyrnjKfpo9mSI",
+  "session_state": "d229b71c-313a-4d50-ac5c-d560a40f8e9f",
+  "at_hash": "xrbG76QbTUWPjs2M09kEzw",
+  "acr": "0",
+  "email_verified": true,
+  "name": "Pavel Böhm",
+  "groups": [
+    "SVN_ING_ROZDELENI",
+    "SVN_WAS_PORTAL",
+    "SVN_JAVAWEBTEAM",
+    "Trask Liberec VPN Users",
+    "Trask Infrastructure & Automation",
+    "SA-Support",
+    "SVN_SHARED_DOCUMENTS",
+    "REPO_INGIB_INFRA",
+    "SVN_CSOB_VIRT",
+    "SVN_UCB_BP",
+    "Trask Employees",
+    "Trask_SPZ",
+    "SVN_KB_DMS",
+    "celestica",
+    "REPO_SKODA_QFB",
+    "SVN_CELESTICA_PLAN",
+    "Trask WiFi Access"
+  ],
+  "preferred_username": "pbohm",
+  "given_name": "Pavel",
+  "family_name": "Böhm",
+  "email": "pbohm@trask.cz"
+}
+
+
+## clusterrolebinding
+❯ k get clusterrolebindings.rbac.authorization.k8s.io test-oidc -o json
+{
+    "apiVersion": "rbac.authorization.k8s.io/v1",
+    "kind": "ClusterRoleBinding",
+    "metadata": {
+        "creationTimestamp": "2021-10-06T07:55:58Z",
+        "name": "test-oidc",
+        "resourceVersion": "1673",
+        "uid": "0346ea21-1333-4d3e-91ac-78b064e894ca"
+    },
+    "roleRef": {
+        "apiGroup": "rbac.authorization.k8s.io",
+        "kind": "ClusterRole",
+        "name": "admin"
+    },
+    "subjects": [
+        {
+            "apiGroup": "rbac.authorization.k8s.io",
+            "kind": "Group",
+            "name": "Trask Employees"
+        }
+    ]
+}
+
+
