@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"PersistentVolume","metadata":{"annotations":{},"name":"pv-oracle"},"spec":{"accessModes":["ReadWriteOnce"],"capacity":{"storage":"100Gi"},"hostPath":{"path":"/mnt/oracle"},"storageClassName":"manual"}}
+  creationTimestamp: "2022-03-16T16:14:27Z"
+  finalizers:
+  - kubernetes.io/pv-protection
+  name: pv-oracle
+  resourceVersion: "8319"
+  uid: 9daf58b8-89e3-4a46-8f46-b843dd8cd095
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 100Gi
+  hostPath:
+    path: /mnt/oracle
+    type: "Directory"
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  volumeMode: Filesystem
+status:
+  phase: Available

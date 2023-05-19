@@ -1,0 +1,22 @@
+## Install
+curl -sSLf https://get.k0s.sh | sudo sh
+
+## Create config
+mkdir -p /etc/k0s
+sudo k0s config create > /etc/k0s/k0s.yaml
+
+## Start cluster
+sudo k0s start
+sudo k0s status
+
+# Create user
+sudo k0s kubeconfig create pbohm
+
+# Enable access
+sudo k0s kubeconfig create --groups "system:masters" pbohm > k0s.config
+
+# create rolebinding
+sudo k0s kubectl create clusterrolebinding --kubeconfig k0s.config pbohm-admin-binding --clusterrole=admin --user=pbohm
+
+## completion
+k0s completion bash > /etc/bash_completion.d/k0s
